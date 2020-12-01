@@ -4,4 +4,4 @@
 
 支持陕西师范大学校园网WLAN/有线登录，其他学校校园网原理类似，需要对源代码稍作修改即可！
 
-软件下载地址[Github Release](https://github.com/HXHGTS/SNNU_Login/releases/latest/download/SNNU_Login.exe)
+软件下载地址: [Github Releases](https://github.com/HXHGTS/SNNU_Login/releases/latest/download/SNNU_Login.exe)
