@@ -1,9 +1,9 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 
-int x,ret;
-FILE* account, * pw;
-char user[11], passwd[20],cmd[200];
+int x,ret,i;
+FILE* account, * pw, * source;
+char user[25], passwd[20],cmd[200],ip[26],url[125],phpsessid[30],blackhole[50],credit[10];
 int SNNU_Login();
 int SNNU_Logoff();
 int SNNU_Status();
@@ -58,7 +58,7 @@ int main() {
 int SNNU_Login() {
 	system("cls");
 	printf("正在登录SNNU. . .\n");
-	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&\" -v",passwd,user);
+	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s\"",passwd,user);
 	system("cls");
 	system(cmd);
 	system("cls");
@@ -78,7 +78,48 @@ int SNNU_Logoff() {
 
 int SNNU_Status() {
 	system("cls");
-	system("explorer http://202.117.144.205:8602/snnuportal/userstatus.jsp");
+	system("curl http://202.117.144.205:8602/snnuportal/userstatus.jsp > userstatus.source");
+	system("type userstatus.source | findstr \"account\" > account.source");
+	system("type userstatus.source | findstr \"ipaddr\" > login_ip.source");
+	system("curl http://202.117.144.205:8602/snnuportal/userstatus.jsp | findstr \"http://202.117.144.205:80/zili/auth_login.php?\" > login_status.source");
+	source = fopen("account.source", "r");
+	ret=fscanf(source, "%s %s %s value=%s/>", blackhole,blackhole,blackhole,user);
+	fclose(source);
+	source = NULL;
+	source = fopen("login_ip.source", "r");
+	ret = fscanf(source, "%s %s %s value=%s/>", blackhole, blackhole, blackhole, ip);
+	fclose(source);
+	source = NULL;
+	source = fopen("login_status.source", "r");
+	ret = fscanf(source, "      <td><div class=\"zhengwen\" align=\"center\"><span class=\"zhengwen2\">Copyright （C）2012 陕西师范大学</span> &nbsp;<span class=\"zhengwen2\">服务电话：<span class=\"dianhua\">029-85310558</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"zhengwen2\"><a href=\"%s\">自助服务主页</a>&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;<a href=\"http://www.snnu.edu.cn/\">学校主页</a>&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;<a href=\"http://202.117.144.205/zili_pre/\">临时账号注册</a></span><br>", url);
+	fclose(source);
+	for (i = 0; i <= 125; i++) {
+		if (url[i]=='\"') {
+			url[i] = '\0';
+			break;
+		}
+	}
+	sprintf(cmd,"curl \"%s\" -c login.source",url);
+	system(cmd);
+	system("curl -b login.source \"http://202.117.144.205/zili/myinfo.php\" > info.txt");
+	system("chcp 65001");
+	system("type info.txt | find \"元\" > credit.source");
+	source = fopen("credit.source", "r");
+	ret = fscanf(source, "                                        %s", credit);
+	fclose(source);
+	for (i = 0; i <= 10; i++) {
+		if (credit[i] != '.' && credit[i] < '0'|| credit[i] > '9') {
+			credit[i] = '\0';
+			break;
+		}
+	}
+	system("chcp 936");
+	system("cls");
+	printf("登录账号:%s\n", user);
+	printf("登录ip:%s\n", ip);
+	printf("余额:");
+	printf("%s元\n", credit);
+	system("pause");
 	return 0;
 }
 
