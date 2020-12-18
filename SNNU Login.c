@@ -5,6 +5,8 @@ int x,ret,i;
 FILE* account, * pw, * source;
 char user[25], passwd[20],cmd[200],ip[26],url[125],phpsessid[30],blackhole[50],credit[10];
 int SNNU_Login();
+int CMCC_Login();
+int CUNI_Login();
 int SNNU_Logoff();
 int SNNU_Status();
 int SSL_VPN();
@@ -34,19 +36,25 @@ int main() {
 	printf("----------------------------------------------------------\n");
 	printf("-----------------------SNNU登录工具-----------------------\n");
 	printf("----------------------------------------------------------\n\n");
-	printf("1.登录SNNU有线/无线\n\n2.退出SNNU有线/无线\n\n3.查询SNNU有线/无线登录状态\n\n4.校园网VPN登录(校外/数据流量访问)\n\n5.退出\n\n请输入:");
+	printf("1.登录SNNU有线/无线（教育网入口）\n\n2.登录移动校园宽带\n\n3.登录联通校园宽带\n\n4.一键退出SNNU有线/无线(支持校园网、校园宽带)\n\n5.查询SNNU有线/无线登录状态\n\n6.校园网VPN登录(校外/数据流量访问)\n\n0.退出\n\n请输入:");
 	ret=scanf("%d", &x);
 	if (x == 1)
 	{
 		SNNU_Login();
 	}
 	else if (x == 2) {
-		SNNU_Logoff();
+		CMCC_Login();
 	}
 	else if (x == 3) {
-		SNNU_Status();
+		CUNI_Login();
 	}
 	else if (x == 4) {
+		SNNU_Logoff();
+	}
+	else if (x == 5) {
+		SNNU_Status();
+	}
+	else if (x == 6) {
 		SSL_VPN();
 	}
 	else {
@@ -63,6 +71,30 @@ int SNNU_Login() {
 	system(cmd);
 	system("cls");
 	printf("已登录SNNU!\n");
+	system("pause");
+	return 0;
+}
+
+int CMCC_Login() {
+	system("cls");
+	printf("正在登录移动宽带. . .\n");
+	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&yys=mobile\"", passwd, user);
+	system("cls");
+	system(cmd);
+	system("cls");
+	printf("已登录移动宽带!\n");
+	system("pause");
+	return 0;
+}
+
+int CUNI_Login() {
+	system("cls");
+	printf("正在登录联通宽带. . .\n");
+	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&yys=unicom\"", passwd, user);
+	system("cls");
+	system(cmd);
+	system("cls");
+	printf("已登录联通宽带!\n");
 	system("pause");
 	return 0;
 }
