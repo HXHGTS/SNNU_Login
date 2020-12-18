@@ -1,7 +1,7 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 
-int x,ret,i;
+int RunMode,ret,i;
 FILE* account, * pw, * source;
 char user[25], passwd[20],cmd[200],ip[26],url[125],phpsessid[30],blackhole[50],credit[10];
 int SNNU_Login();
@@ -10,21 +10,13 @@ int CUNI_Login();
 int SNNU_Logoff();
 int SNNU_Status();
 int SSL_VPN();
+int SaveUserInfo();
 
 
 int main() {
 	system("color 0B");
 	if (fopen("account.ini", "r") == NULL|| fopen("pw.ini", "r") == NULL) {
-		printf("初次使用,请输入你的校园卡卡号:");
-		ret=scanf("%s", user);
-		printf("请输入你的登录密码:");
-		ret=scanf("%s", passwd);
-		account = fopen("account.ini", "w");
-		fprintf(account, "%s", user);
-		fclose(account);
-		pw = fopen("pw.ini", "w");
-		fprintf(pw, "%s", passwd);
-		fclose(pw);
+		SaveUserInfo();
 	}
 	account = fopen("account.ini", "r");
 	ret=fscanf(account, "%s", user);
@@ -34,28 +26,32 @@ int main() {
 	fclose(pw);
 	MENU: system("cls");
 	printf("----------------------------------------------------------\n");
-	printf("-----------------------SNNU登录工具-----------------------\n");
+	printf("------------SNNU登录工具（支持有线/无线接入）-------------\n");
 	printf("----------------------------------------------------------\n\n");
-	printf("1.登录SNNU有线/无线（教育网入口）\n\n2.登录移动校园宽带\n\n3.登录联通校园宽带\n\n4.一键退出SNNU有线/无线(支持校园网、校园宽带)\n\n5.查询SNNU有线/无线登录状态\n\n6.校园网VPN登录(校外/数据流量访问)\n\n0.退出\n\n请输入:");
-	ret=scanf("%d", &x);
-	if (x == 1)
+	printf("1.登录校园网\n\n2.登录移动校园宽带\n\n3.登录联通校园宽带\n\n4.一键退出校园网、校园宽带\n\n5.查询账号认证状态\n\n6.VPN登录(校外/数据流量访问)\n\n7.更新校园网账号密码\n\n0.退出\n\n请输入:");
+	ret=scanf("%d", &RunMode);
+	system("cls");
+	if (RunMode == 1)
 	{
 		SNNU_Login();
 	}
-	else if (x == 2) {
+	else if (RunMode == 2) {
 		CMCC_Login();
 	}
-	else if (x == 3) {
+	else if (RunMode == 3) {
 		CUNI_Login();
 	}
-	else if (x == 4) {
+	else if (RunMode == 4) {
 		SNNU_Logoff();
 	}
-	else if (x == 5) {
+	else if (RunMode == 5) {
 		SNNU_Status();
 	}
-	else if (x == 6) {
+	else if (RunMode == 6) {
 		SSL_VPN();
+	}
+	else if (RunMode == 7) {
+		SaveUserInfo();
 	}
 	else {
 		exit(0);
@@ -64,7 +60,6 @@ int main() {
 }
 
 int SNNU_Login() {
-	system("cls");
 	printf("正在登录SNNU. . .\n");
 	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s\"",passwd,user);
 	system("cls");
@@ -76,9 +71,8 @@ int SNNU_Login() {
 }
 
 int CMCC_Login() {
-	system("cls");
 	printf("正在登录移动宽带. . .\n");
-	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&yys=mobile\"", passwd, user);
+	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&yys=%s\"", passwd, user,"mobile");
 	system("cls");
 	system(cmd);
 	system("cls");
@@ -88,9 +82,8 @@ int CMCC_Login() {
 }
 
 int CUNI_Login() {
-	system("cls");
 	printf("正在登录联通宽带. . .\n");
-	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&yys=unicom\"", passwd, user);
+	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&yys=%s\"", passwd, user,"unicom");
 	system("cls");
 	system(cmd);
 	system("cls");
@@ -100,7 +93,6 @@ int CUNI_Login() {
 }
 
 int SNNU_Logoff() {
-	system("cls");
 	system("curl http://202.117.144.205:8602/snnuportal/logoff");
 	system("cls");
 	printf("已退出SNNU!\n");
@@ -109,7 +101,6 @@ int SNNU_Logoff() {
 }
 
 int SNNU_Status() {
-	system("cls");
 	system("curl http://202.117.144.205:8602/snnuportal/userstatus.jsp > userstatus.source");
 	system("type userstatus.source | findstr \"account\" > account.source");
 	system("type userstatus.source | findstr \"ipaddr\" > login_ip.source");
@@ -146,6 +137,8 @@ int SNNU_Status() {
 		}
 	}
 	system("chcp 936");
+	system("del /F /S /Q *.source");
+	system("del info.txt");
 	system("cls");
 	printf("登录账号:%s\n", user);
 	printf("登录ip:%s\n", ip);
@@ -156,7 +149,20 @@ int SNNU_Status() {
 }
 
 int SSL_VPN() {
-	system("cls");
 	system("explorer http://webvpn.snnu.edu.cn");
+	return 0;
+}
+
+int SaveUserInfo() {
+	printf("初次使用,请输入你的校园卡卡号:");
+	ret = scanf("%s", user);
+	printf("请输入你的登录密码:");
+	ret = scanf("%s", passwd);
+	account = fopen("account.ini", "w");
+	fprintf(account, "%s", user);
+	fclose(account);
+	pw = fopen("pw.ini", "w");
+	fprintf(pw, "%s", passwd);
+	fclose(pw);
 	return 0;
 }
