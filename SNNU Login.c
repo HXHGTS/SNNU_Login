@@ -7,6 +7,7 @@ char user[25], passwd[20],cmd[200],ip[26],url[125],phpsessid[30],blackhole[50],c
 int SNNU_Login();
 int CMCC_Login();
 int CUNI_Login();
+int CTEL_Login();
 int SNNU_Logoff();
 int SNNU_Status();
 int SSL_VPN();
@@ -28,7 +29,7 @@ int main() {
 	printf("----------------------------------------------------------\n");
 	printf("------------SNNU登录工具（支持有线/无线接入）-------------\n");
 	printf("----------------------------------------------------------\n\n");
-	printf("1.登录校园网\n\n2.登录移动校园宽带\n\n3.登录联通校园宽带\n\n4.一键退出校园网、校园宽带\n\n5.查询账号认证状态\n\n6.VPN登录(校外/数据流量访问)\n\n7.更新校园网账号密码\n\n0.退出\n\n请输入:");
+	printf("1.登录校园网\n\n2.登录移动宽带\n\n3.登录联通宽带\n\n4.登录电信宽带\n\n5.一键退出校园网与宽带\n\n6.查询账号认证状态\n\n7.VPN登录(校外/数据流量访问)\n\n8.更新校园网账号密码\n\n0.退出\n\n请输入:");
 	ret=scanf("%d", &RunMode);
 	system("cls");
 	if (RunMode == 1)
@@ -42,15 +43,18 @@ int main() {
 		CUNI_Login();
 	}
 	else if (RunMode == 4) {
-		SNNU_Logoff();
+		CTEL_Login();
 	}
 	else if (RunMode == 5) {
-		SNNU_Status();
+		SNNU_Logoff();
 	}
 	else if (RunMode == 6) {
-		SSL_VPN();
+		SNNU_Status();
 	}
 	else if (RunMode == 7) {
+		SSL_VPN();
+	}
+	else if (RunMode == 8) {
 		SaveUserInfo();
 	}
 	else {
@@ -88,6 +92,18 @@ int CUNI_Login() {
 	system(cmd);
 	system("cls");
 	printf("已登录联通宽带!\n");
+	system("pause");
+	return 0;
+}
+
+int CTEL_Login()
+{
+	printf("正在登录电信宽带. . .\n");
+	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&yys=%s\"", passwd, user, "telecom");
+	system("cls");
+	system(cmd);
+	system("cls");
+	printf("已登录电信宽带!\n");
 	system("pause");
 	return 0;
 }
