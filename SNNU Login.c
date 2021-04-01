@@ -1,9 +1,13 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 
-int RunMode,ret,i;
+int RunMode,ret;
 FILE* account, * pw, * source;
-char user[25], passwd[20],cmd[200],ip[26],url[125],phpsessid[30],blackhole[50],credit[10];
+char portal[23] = "http://202.117.144.205";
+char port8601[17] = ":8601/snnuportal";
+char port8602[17] = ":8602/snnuportal";
+char port8603[17] = ":8603/snnuportal";
+char user[12], passwd[20],cmd[200];
 int SNNU_Login();
 int CMCC_Login();
 int CUNI_Login();
@@ -29,7 +33,7 @@ int main() {
 	printf("----------------------------------------------------------\n");
 	printf("------------SNNU登录工具（支持有线/无线接入）-------------\n");
 	printf("----------------------------------------------------------\n\n");
-	printf("1.登录校园网\n\n2.登录移动宽带\n\n3.登录联通宽带\n\n4.登录电信宽带\n\n5.一键退出校园网与宽带\n\n6.查询账号认证状态\n\n7.VPN登录(校外/数据流量访问)\n\n8.更新校园网账号密码\n\n0.退出\n\n请输入:");
+	printf("1.登录校园网\n\n2.登录移动宽带\n\n3.登录联通宽带\n\n4.登录电信宽带\n\n5.一键退出登录状态\n\n6.网络状态测试\n\n7.VPN登录(校外/数据流量访问)\n\n8.更新校园网账号密码\n\n0.退出\n\n请输入:");
 	ret=scanf("%d", &RunMode);
 	system("cls");
 	if (RunMode == 1)
@@ -65,33 +69,45 @@ int main() {
 
 int SNNU_Login() {
 	printf("正在登录SNNU. . .\n");
-	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s\"",passwd,user);
-	system("cls");
-	system(cmd);
-	system("cls");
-	printf("已登录SNNU!\n");
+	sprintf(cmd, "curl \"%s%s/login\" -d \"password=%s&account=%s\"",portal,port8602,passwd,user);
+	if (system(cmd) == 0) {
+		system("cls");
+		printf("已登录SNNU!\n");
+	}
+	else {
+		system("cls");
+		printf("无法登录SNNU,请确认网线/WLAN已连接!\n");
+	}
 	system("pause");
 	return 0;
 }
 
 int CMCC_Login() {
 	printf("正在登录移动宽带. . .\n");
-	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&yys=%s\"", passwd, user,"mobile");
-	system("cls");
-	system(cmd);
-	system("cls");
-	printf("已登录移动宽带!\n");
+	sprintf(cmd, "curl \"%s%s/login\" -d \"password=%s&account=%s&yys=%s\"",portal,port8602, passwd, user,"mobile");
+	if (system(cmd) == 0) {
+		system("cls");
+		printf("已登录移动宽带!\n");
+	}
+	else {
+		system("cls");
+		printf("无法登录移动宽带,请确认网线/WLAN已连接!\n");
+	}
 	system("pause");
 	return 0;
 }
 
 int CUNI_Login() {
 	printf("正在登录联通宽带. . .\n");
-	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&yys=%s\"", passwd, user,"unicom");
-	system("cls");
-	system(cmd);
-	system("cls");
-	printf("已登录联通宽带!\n");
+	sprintf(cmd, "curl \"%s%s/login\" -d \"password=%s&account=%s&yys=%s\"", portal, port8602, passwd, user, "unicom");
+	if (system(cmd) == 0) {
+		system("cls");
+		printf("已登录联通宽带!\n");
+	}
+	else {
+		system("cls");
+		printf("无法登录联通宽带,请确认网线/WLAN已连接!\n");
+	}
 	system("pause");
 	return 0;
 }
@@ -99,67 +115,60 @@ int CUNI_Login() {
 int CTEL_Login()
 {
 	printf("正在登录电信宽带. . .\n");
-	sprintf(cmd, "curl \"http://202.117.144.205:8602/snnuportal/login\" -d \"password=%s&account=%s&yys=%s\"", passwd, user, "telecom");
-	system("cls");
-	system(cmd);
-	system("cls");
-	printf("已登录电信宽带!\n");
+	sprintf(cmd, "curl \"%s%s/login\" -d \"password=%s&account=%s&yys=%s\"", portal, port8602, passwd, user, "telecom");
+	if (system(cmd) == 0) {
+		system("cls");
+		printf("已登录电信宽带!\n");
+	}
+	else {
+		system("cls");
+		printf("无法登录电信宽带,请确认网线/WLAN已连接!\n");
+	}
 	system("pause");
 	return 0;
 }
 
 int SNNU_Logoff() {
-	system("curl http://202.117.144.205:8602/snnuportal/logoff");
-	system("cls");
-	printf("已退出SNNU!\n");
+	sprintf(cmd, "curl %s%s/logoff", portal, port8602);
+	if (system(cmd) == 0) {
+		system("cls");
+		printf("已退出校园网登录!\n");
+	}
+	else {
+		system("cls");
+		printf("无法退出校园网登录,请确认网线/WLAN已连接!\n");
+	}
 	system("pause");
 	return 0;
 }
 
 int SNNU_Status() {
-	system("curl http://202.117.144.205:8602/snnuportal/userstatus.jsp > userstatus.source");
-	system("type userstatus.source | findstr \"account\" > account.source");
-	system("type userstatus.source | findstr \"ipaddr\" > login_ip.source");
-	system("curl http://202.117.144.205:8602/snnuportal/userstatus.jsp | findstr \"http://202.117.144.205:80/zili/auth_login.php?\" > login_status.source");
-	source = fopen("account.source", "r");
-	ret=fscanf(source, "%s %s %s value=%s/>", blackhole,blackhole,blackhole,user);
-	fclose(source);
-	source = NULL;
-	source = fopen("login_ip.source", "r");
-	ret = fscanf(source, "%s %s %s value=%s/>", blackhole, blackhole, blackhole, ip);
-	fclose(source);
-	source = NULL;
-	source = fopen("login_status.source", "r");
-	ret = fscanf(source, "      <td><div class=\"zhengwen\" align=\"center\"><span class=\"zhengwen2\">Copyright （C）2012 陕西师范大学</span> &nbsp;<span class=\"zhengwen2\">服务电话：<span class=\"dianhua\">029-85310558</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"zhengwen2\"><a href=\"%s\">自助服务主页</a>&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;<a href=\"http://www.snnu.edu.cn/\">学校主页</a>&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;<a href=\"http://202.117.144.205/zili_pre/\">临时账号注册</a></span><br>", url);
-	fclose(source);
-	for (i = 0; i <= 125; i++) {
-		if (url[i]=='\"') {
-			url[i] = '\0';
-			break;
-		}
+	printf("-------------------------\n");
+	printf("正在检测校园网连通性. . .\n");
+	printf("-------------------------\n\n");
+	if (system("ping net.snnu.edu.cn") == 0) {
+		printf("-------------------\n");
+		printf("校园网内网访问正常!\n");
+		printf("-------------------\n");
 	}
-	sprintf(cmd,"curl \"%s\" -c login.source",url);
-	system(cmd);
-	system("curl -b login.source \"http://202.117.144.205/zili/myinfo.php\" > info.txt");
-	system("chcp 65001");
-	system("type info.txt | find \"元\" > credit.source");
-	source = fopen("credit.source", "r");
-	ret = fscanf(source, "                                        %s", credit);
-	fclose(source);
-	for (i = 0; i <= 10; i++) {
-		if (credit[i] != '.' && credit[i] < '0'|| credit[i] > '9') {
-			credit[i] = '\0';
-			break;
-		}
+	else {
+		printf("------------------------------------------\n");
+		printf("校园网内网访问出错，请确认网线/WLAN已连接!\n");
+		printf("------------------------------------------\n\n\n");
 	}
-	system("chcp 936");
-	system("del /F /S /Q *.source");
-	system("del info.txt");
-	system("cls");
-	printf("登录账号:%s\n", user);
-	printf("登录ip:%s\n", ip);
-	printf("余额:");
-	printf("%s元\n", credit);
+	printf("---------------------------\n");
+	printf("正在检测外部网络连通性. . .\n");
+	printf("---------------------------\n\n");
+	if (system("ping tdns.x2v6.sched.dcloudstc.com") == 0) {
+		printf("-----------------\n");
+		printf("外部网络访问正常!\n");
+		printf("-----------------\n");
+	}
+	else {
+		printf("------------------------------------------------\n");
+		printf("外部网络访问出错，请确认校园网余额/宽带是否到期!\n");
+		printf("------------------------------------------------\n\n");
+	}
 	system("pause");
 	return 0;
 }
