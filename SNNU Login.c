@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 int RunMode,ret;
-FILE* account, * pw, * source;
+FILE* account;
 char portal[23] = "http://202.117.144.205";
 char port8601[17] = ":8601/snnuportal";
 char port8602[17] = ":8602/snnuportal";
@@ -20,15 +20,12 @@ int SaveUserInfo();
 
 int main() {
 	system("color 0B");
-	if (fopen("account.ini", "r") == NULL|| fopen("pw.ini", "r") == NULL) {
+	if (fopen("account.ini", "r") == NULL) {
 		SaveUserInfo();
 	}
 	account = fopen("account.ini", "r");
-	ret=fscanf(account, "%s", user);
+	ret=fscanf(account, "%s %s", user,passwd);
 	fclose(account);
-	pw = fopen("pw.ini", "r");
-	ret=fscanf(pw, "%s", passwd);
-	fclose(pw);
 	MENU: system("cls");
 	printf("----------------------------------------------------------\n");
 	printf("------------SNNU登录工具（支持有线/无线接入）-------------\n");
@@ -184,10 +181,7 @@ int SaveUserInfo() {
 	printf("请输入你的登录密码:");
 	ret = scanf("%s", passwd);
 	account = fopen("account.ini", "w");
-	fprintf(account, "%s", user);
+	fprintf(account, "%s %s", user,passwd);
 	fclose(account);
-	pw = fopen("pw.ini", "w");
-	fprintf(pw, "%s", passwd);
-	fclose(pw);
 	return 0;
 }
