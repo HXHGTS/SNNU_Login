@@ -180,6 +180,7 @@ int Network_Repair() {
 	printf("正在重新获取ip地址. . .\n");
 	system("ipconfig /release");
 	system("ipconfig /renew");
+	system("cls");
 	printf("修复完成,请尝试重新登录!\n");
 	system("pause > nul");
 	return 0;
