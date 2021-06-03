@@ -14,7 +14,7 @@ int CUNI_Login();
 int CTEL_Login();
 int SNNU_Logoff();
 int SNNU_Status();
-int SSL_VPN();
+int Network_Repair();
 int SaveUserInfo();
 
 
@@ -30,7 +30,7 @@ int main() {
 	printf("----------------------------------------------------------\n");
 	printf("------------SNNU登录工具（支持有线/无线接入）-------------\n");
 	printf("----------------------------------------------------------\n\n");
-	printf("1.登录校园网\n\n2.登录移动宽带\n\n3.登录联通宽带\n\n4.登录电信宽带\n\n5.一键退出登录状态\n\n6.网络状态测试\n\n7.VPN登录(校外/数据流量访问)\n\n8.更新校园网账号密码\n\n0.退出\n\n请输入:");
+	printf("1.登录校园网\n\n2.登录移动宽带\n\n3.登录联通宽带\n\n4.登录电信宽带\n\n5.一键退出登录状态\n\n6.网络状态测试\n\n7.网络异常修复(请先关闭笔记本热点功能)\n\n8.更新校园网账号密码\n\n0.退出\n\n请输入:");
 	ret=scanf("%d", &RunMode);
 	system("cls");
 	if (RunMode == 1)
@@ -53,7 +53,7 @@ int main() {
 		SNNU_Status();
 	}
 	else if (RunMode == 7) {
-		SSL_VPN();
+		Network_Repair();
 	}
 	else if (RunMode == 8) {
 		SaveUserInfo();
@@ -170,8 +170,17 @@ int SNNU_Status() {
 	return 0;
 }
 
-int SSL_VPN() {
-	system("explorer http://webvpn.snnu.edu.cn");
+int Network_Repair() {
+	printf("正在重置dns. . .\n");
+	system("netsh interface ip set dns \"以太网\" dhcp");
+	system("netsh interface ipv6 set dns \"以太网\" dhcp");
+	system("netsh interface ip set dns \"WLAN\" dhcp");
+	system("netsh interface ipv6 set dns \"WLAN\" dhcp");
+	system("del /F /S /Q %%WINDIR%%\\System32\\drivers\\etc\\hosts");
+	system("ipconfig /flushdns");
+	printf("正在重新获取ip地址. . .\n");
+	system("ipconfig /release");
+	system("ipconfig /renew");
 	return 0;
 }
 
