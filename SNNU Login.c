@@ -176,11 +176,12 @@ int Network_Repair() {
 	system("netsh interface ipv6 set dns \"以太网\" dhcp");
 	system("netsh interface ip set dns \"WLAN\" dhcp");
 	system("netsh interface ipv6 set dns \"WLAN\" dhcp");
-	system("del /F /S /Q %%WINDIR%%\\System32\\drivers\\etc\\hosts");
 	system("ipconfig /flushdns");
 	printf("正在重新获取ip地址. . .\n");
 	system("ipconfig /release");
 	system("ipconfig /renew");
+	printf("修复完成,请尝试重新登录!\n");
+	system("pause > nul");
 	return 0;
 }
 
